@@ -13,4 +13,21 @@ body {
   justify-content: center;
   flex-direction: column;
   background-color: rgb(0, 0, 0);
+  cursor: url("@/assets/cursor.png") 0 0, auto;
+}
+
+.sv-gradient {
+  background: linear-gradient(top, rgb(255, 203, 123), rgb(235, 168, 103));
+  background: -webkit-linear-gradient(
+    top,
+    rgb(255, 203, 123),
+    rgb(235, 168, 103)
+  );
+}
+
+.sv-border {
+  outline: 4px solid rgb(91, 43, 42);
+  border: 4px outset rgb(214, 143, 84);
+  border-radius: 5px;
+  padding: 6px 4px;
 }

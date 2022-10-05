@@ -1,53 +1,50 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { RouterLink, RouterView } from "vue-router";
+
+const menu = ref({
+  show: false,
+  left: 0,
+  top: 0,
+});
+
+oncontextmenu = (event) => {
+  event.preventDefault();
+  menu.value.show = true;
+  menu.value.top = event.clientY;
+  menu.value.left = event.clientX;
+};
+window.onclick = (event) => {
+  event.preventDefault();
+  menu.value.show = false;
+};
 </script>
 
 <template>
-  <div class="sv-main">
-    <div class="solid-1">
-      <div class="solid-2">
-        <div class="solid-3">
-          <div class="solid-4">
-            <div class="solid-5">
-              <RouterView />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="sv-main sv-border sv-gradient">
+    <RouterView />
+  </div>
+  <div
+    class="menu sv-border sv-gradient"
+    :style="{
+      left: `${menu.left}px`,
+      top: `${menu.top}px`,
+      display: menu.show ? 'block' : 'none',
+    }"
+  >
+    右键菜单
   </div>
 </template>
 
 <style scoped>
+.menu {
+  display: none;
+  background-color: #fff;
+  position: absolute;
+}
 .sv-main {
   height: 600px;
   width: 860px;
   min-width: 860px;
-  background: linear-gradient(top, rgb(255, 203, 123), rgb(235, 168, 103));
-  background: -webkit-linear-gradient(
-    top,
-    rgb(255, 203, 123),
-    rgb(235, 168, 103)
-  );
-}
-.solid-1 {
-  border: 4px solid rgb(91, 43, 42);
-  height: 100%;
-}
-.solid-2 {
-  border: 4px solid rgb(177, 78, 5);
-  height: calc(100% - 8px);
-}
-.solid-3 {
-  border: 4px solid rgb(220, 123, 5);
-  height: calc(100% - 8px);
-}
-.solid-4 {
-  border: 4px solid rgb(133, 54, 5);
-  height: calc(100% - 8px);
-}
-.solid-5 {
-  border: 4px solid rgb(214, 143, 84);
-  height: calc(100% - 8px);
 }
 </style>
