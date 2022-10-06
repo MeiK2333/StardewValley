@@ -9,11 +9,15 @@ document.onselectstart = () => {
 </script>
 
 <template>
-  <div class="sv-main sv-border sv-gradient">
-    <div class="sv-menu" v-if="store.name">
-      <ul>
-        <RouterLink :to="{ name: 'inventory' }"><li>物品栏</li></RouterLink>
-        <RouterLink :to="{ name: 'skills' }"><li>技能</li></RouterLink>
+  <div class="main sv-border sv-gradient">
+    <div class="menu" v-if="store.name">
+      <ul class="menu-ul">
+        <RouterLink :to="{ name: 'inventory' }">
+          <li class="menu-li sv-border sv-gradient">物品</li>
+        </RouterLink>
+        <RouterLink :to="{ name: 'skills' }">
+          <li class="menu-li sv-border sv-gradient">技能</li>
+        </RouterLink>
       </ul>
     </div>
     <RouterView />
@@ -21,10 +25,26 @@ document.onselectstart = () => {
 </template>
 
 <style scoped>
-.sv-main {
+.main {
   height: 600px;
   width: 860px;
   min-width: 860px;
   cursor: url("@/assets/cursor.png") 0 0, auto;
+}
+.menu {
+  transform: translateY(-48px);
+  position: absolute;
+}
+.menu-ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+.menu-li {
+  display: unset;
+  margin: 0 4px;
+}
+.router-link-active {
+  transform: translateY(8px);
 }
 </style>

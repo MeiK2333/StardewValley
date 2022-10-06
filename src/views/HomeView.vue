@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSavesStore } from "@/stores/saves";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import { loadXmlFile } from "@/utils";
 import { useRouter } from "vue-router";
 
