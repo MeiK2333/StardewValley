@@ -16,6 +16,7 @@ const loadSave = async () => {
   const file = elem!.files!.item(0)!;
   const tree = await loadXmlFile(file);
 
+  //@ts-ignore
   saves.$patch({ name: file.name, tree });
   router.push({ name: "inventory" });
 };

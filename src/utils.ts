@@ -1,4 +1,4 @@
-export async function loadXmlFile(file: File): Promise<Document> {
+export async function loadXmlFile(file: File): Promise<Element> {
   return new Promise((res, rej) => {
     const reader = new FileReader();
     reader.readAsText(file!, "UTF-8");
@@ -11,7 +11,7 @@ export async function loadXmlFile(file: File): Promise<Document> {
       try {
         const str: string = event.target.result as string;
         const tree = domParse.parseFromString(str, "text/xml");
-        res(tree);
+        res(tree as unknown as Element);
       } catch (err) {
         rej(err);
       }
@@ -19,7 +19,7 @@ export async function loadXmlFile(file: File): Promise<Document> {
   });
 }
 
-export function downloadXmlFile(tree: Document, filename: string) {
+export function downloadXmlFile(tree: Element, filename: string) {
   const data = new XMLSerializer().serializeToString(tree);
   const url = window.URL.createObjectURL(
     new Blob([data], { type: "applacation/xml" })

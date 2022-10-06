@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { useSavesStore } from "@/stores/saves";
+import ContextMenu from "./components/ContextMenu.vue";
 
 const store = useSavesStore();
+//@ts-ignore
+window.globalThis.store = store;
 // 禁用选择以防止选中污染样式
 document.onselectstart = () => {
   return false;
+};
+document.oncontextmenu = (event) => {
+  event.preventDefault();
 };
 </script>
 
@@ -22,6 +28,7 @@ document.onselectstart = () => {
     </div>
     <RouterView />
   </div>
+  <ContextMenu></ContextMenu>
 </template>
 
 <style scoped>
