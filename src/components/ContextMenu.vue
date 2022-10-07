@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useContextMenuStore } from "@/stores/contextmenu";
 import { ref } from "vue";
+
+const store = useContextMenuStore();
 
 const show = ref(false);
 const left = ref(0);
@@ -13,6 +16,7 @@ oncontextmenu = (event) => {
 };
 window.onclick = () => {
   show.value = false;
+  store.$patch({ options: [] });
 };
 
 const version = () => {
@@ -30,6 +34,13 @@ const version = () => {
     }"
   >
     <ul class="contextmenu-ul">
+      <li
+        class="contextmenu-li"
+        @click="item.onClick($event)"
+        v-for="item in store.options"
+      >
+        {{ item.title }}
+      </li>
       <li class="contextmenu-li" @click="version">Stardew Valley v1.5.6</li>
     </ul>
   </div>
