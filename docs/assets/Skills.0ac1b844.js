@@ -1,0 +1,1 @@
+import{d as s,e as t,c as a,t as n,g as o,o as r}from"./index.6fe748a5.js";const _=s({__name:"Skills",setup(l){const e=t();return(c,i)=>(r(),a("div",null,"Skills "+n(o(e).name),1))}});export{_ as default};
