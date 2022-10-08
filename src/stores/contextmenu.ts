@@ -4,5 +4,9 @@ import type { ContextMenuItem } from "@/struct";
 
 export const useContextMenuStore = defineStore("contextmenu", () => {
   const options = ref<Array<ContextMenuItem>>([]);
-  return { options };
+
+  const pageKey = ref({
+    objects: 0,
+  });
+  return { options, pageKey };
 });

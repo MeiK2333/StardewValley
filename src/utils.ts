@@ -1,3 +1,15 @@
+export function createXmlElement(str: string) {
+  const domParser = new DOMParser();
+  const tree = domParser.parseFromString(
+    `<SaveGame xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">` +
+      str +
+      `</SaveGame>`,
+    "text/xml"
+  );
+  const elem = tree as unknown as Element;
+  return elem.firstChild!.firstChild! as Element;
+}
+
 export async function loadXmlFile(file: File): Promise<Element> {
   return new Promise((res, rej) => {
     const reader = new FileReader();

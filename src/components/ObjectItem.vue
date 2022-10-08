@@ -1,25 +1,34 @@
 <script setup lang="ts">
 import { useContextMenuStore } from "@/stores/contextmenu";
+import { useSavesStore } from "@/stores/saves";
+import { createXmlElement } from "@/utils";
 
 const store = useContextMenuStore();
 defineProps(["object"]);
 const contextmenu = (event: Event, object: Element) => {
-  store.options = [
-    {
+  const savesStore = useSavesStore();
+  store.options = [];
+  const stackable = object.querySelector("stackable")?.textContent;
+  // 可修改库存
+  if (stackable !== "false") {
+    store.options.push({
       title: "修改库存",
       onClick: (event) => {
         console.log(object);
         console.log("修改库存");
       },
-    },
-    {
+    });
+    store.options.push({
       title: "移除物品",
       onClick: (event) => {
-        console.log(object);
-        console.log("移除物品");
+        const nil = createXmlElement(`<Item xsi:nil="true"/>`);
+        savesStore.tree
+          ?.querySelector("player items")
+          ?.replaceChild(nil, object);
+        store.pageKey.objects++;
       },
-    },
-  ];
+    });
+  }
   event.preventDefault();
 };
 </script>

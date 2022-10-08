@@ -30,32 +30,13 @@ const moneyContextmenu = (event: Event) => {
   <div class="objects">
     <template
       v-for="(item, idx) in tree?.querySelectorAll('player items Item')"
-      :key="idx"
+      :key="'' + contextMenuStore.pageKey.objects + idx"
     >
       <ObjectItem :object="item"></ObjectItem>
     </template>
   </div>
   <div class="split"></div>
   <div class="detail">
-    <div class="dress">
-      <ObjectItem :object="tree?.querySelector('player leftRing')"></ObjectItem>
-      <ObjectItem :object="tree?.querySelector('player hat')"></ObjectItem>
-      <ObjectItem
-        :object="tree?.querySelector('player rightRing')"
-      ></ObjectItem>
-      <ObjectItem
-        :object="tree?.querySelector('player shirtItem')"
-      ></ObjectItem>
-      <ObjectItem :object="tree?.querySelector('player boots')"></ObjectItem>
-      <ObjectItem
-        :object="tree?.querySelector('player pantsItem')"
-      ></ObjectItem>
-
-      <div class="username">
-        {{ tree?.querySelector("player name")?.textContent }}
-      </div>
-    </div>
-
     <div class="money" @contextmenu="moneyContextmenu($event)">
       <div>{{ tree?.querySelector("player farmName")?.textContent }} 农场</div>
       <div>
