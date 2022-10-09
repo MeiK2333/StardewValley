@@ -7,6 +7,7 @@ export const useContextMenuStore = defineStore("contextmenu", () => {
 
   const pageKey = ref({
     objects: 0,
+    money: 0,
   });
   return { options, pageKey };
 });

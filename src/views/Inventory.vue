@@ -20,7 +20,7 @@ const moneyContextmenu = (event: Event) => {
     {
       title: "修改持有现金",
       onClick: (event) => {
-        console.log("修改持有现金");
+        moneyChange();
       },
     },
   ];
@@ -42,6 +42,33 @@ const stackChange = (object: Element) => {
       object.querySelector("Stack")!.textContent = value.value.toString();
       object.querySelector("stack")!.textContent = value.value.toString();
       contextMenuStore.pageKey.objects++;
+      stackChangeShow.value = false;
+    },
+  });
+};
+const moneyChange = () => {
+  const value = ref(Number(tree?.querySelector("player money")?.textContent));
+  $vfm.show("stack-change", {
+    value,
+    confirm: () => {
+      if (value.value <= 0) {
+        value.value = 0;
+      }
+      if (value.value > 99999999) {
+        value.value = 99999999;
+      }
+      const old = {
+        money: Number(tree!.querySelector("player money")!.textContent),
+        total: Number(
+          tree!.querySelector("player totalMoneyEarned")!.textContent
+        ),
+      };
+      tree!.querySelector("player money")!.textContent = value.value.toString();
+      tree!.querySelector("player totalMoneyEarned")!.textContent = (
+        old.total +
+        (value.value - old.money)
+      ).toString();
+      contextMenuStore.pageKey.money++;
       stackChangeShow.value = false;
     },
   });
@@ -91,7 +118,11 @@ const stackChange = (object: Element) => {
   </div>
   <div class="split"></div>
   <div class="detail">
-    <div class="money" @contextmenu="moneyContextmenu($event)">
+    <div
+      class="money"
+      @contextmenu="moneyContextmenu($event)"
+      :key="contextMenuStore.pageKey.money"
+    >
       <div>{{ tree?.querySelector("player farmName")?.textContent }} 农场</div>
       <div>
         目前持有现金： {{ tree?.querySelector("player money")?.textContent }} 金
@@ -140,7 +171,7 @@ const stackChange = (object: Element) => {
 }
 
 .money {
-  width: 320px;
+  width: 420px;
   text-align: center;
   font-size: 22px;
   font-weight: bold;
