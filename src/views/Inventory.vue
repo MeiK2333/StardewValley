@@ -3,6 +3,8 @@ import { useSavesStore } from "@/stores/saves";
 import { downloadXmlFile } from "@/utils";
 import ObjectItem from "@/components/ObjectItem.vue";
 import { useContextMenuStore } from "@/stores/contextmenu";
+import { $vfm } from "vue-final-modal";
+import { ref } from "vue";
 
 const contextMenuStore = useContextMenuStore();
 const store = useSavesStore();
@@ -24,6 +26,26 @@ const moneyContextmenu = (event: Event) => {
   ];
   event.preventDefault();
 };
+
+const stackChangeShow = ref(false);
+const stackChange = (object: Element) => {
+  const value = ref(Number(object.querySelector("Stack")?.textContent));
+  $vfm.show("stack-change", {
+    value,
+    confirm: () => {
+      if (value.value > 999) {
+        value.value = 999;
+      }
+      if (value.value <= 0) {
+        value.value = 1;
+      }
+      object.querySelector("Stack")!.textContent = value.value.toString();
+      object.querySelector("stack")!.textContent = value.value.toString();
+      contextMenuStore.pageKey.objects++;
+      stackChangeShow.value = false;
+    },
+  });
+};
 </script>
 
 <template>
@@ -32,8 +54,40 @@ const moneyContextmenu = (event: Event) => {
       v-for="(item, idx) in tree?.querySelectorAll('player items Item')"
       :key="'' + contextMenuStore.pageKey.objects + idx"
     >
-      <ObjectItem :object="item"></ObjectItem>
+      <ObjectItem :object="item" @stack-change="stackChange(item)"></ObjectItem>
     </template>
+    <vue-final-modal
+      v-model="stackChangeShow"
+      name="stack-change"
+      :click-to-close="true"
+      :esc-to-close="true"
+      :ssr="false"
+    >
+      <template v-slot="{ params }">
+        <input
+          type="number"
+          v-model="params.value"
+          :min="1"
+          :max="999"
+          class="sv-input"
+          style="width: 85%"
+        />
+        <button
+          class="sv-button"
+          @click="params.confirm"
+          style="min-width: 68px; margin-right: 20px"
+        >
+          确定
+        </button>
+        <button
+          class="sv-button"
+          @click="stackChangeShow = false"
+          style="min-width: 68px; margin-left: 20px"
+        >
+          取消
+        </button>
+      </template>
+    </vue-final-modal>
   </div>
   <div class="split"></div>
   <div class="detail">

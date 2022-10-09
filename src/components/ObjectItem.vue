@@ -4,6 +4,7 @@ import { useSavesStore } from "@/stores/saves";
 import { createXmlElement } from "@/utils";
 
 const store = useContextMenuStore();
+const emit = defineEmits(["stackChange"]);
 defineProps(["object"]);
 const contextmenu = (event: Event, object: Element) => {
   const savesStore = useSavesStore();
@@ -14,8 +15,7 @@ const contextmenu = (event: Event, object: Element) => {
     store.options.push({
       title: "修改库存",
       onClick: (event) => {
-        console.log(object);
-        console.log("修改库存");
+        emit("stackChange");
       },
     });
     store.options.push({
