@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useContextMenuStore } from "@/stores/contextmenu";
 import { useSavesStore } from "@/stores/saves";
+import { createXmlElement } from "@/utils";
 import { ref } from "vue";
 import { $vfm } from "vue-final-modal";
 const store = useSavesStore();
@@ -43,13 +44,17 @@ const professionName = [
 const experiencePoints = store.tree!.querySelectorAll(
   "player experiencePoints int"
 );
-const professions = store.tree!.querySelectorAll("player professions int");
-const professionSet: Set<Number> = new Set();
-professions.forEach((value) => {
-  professionSet.add(Number(value.textContent));
-});
+const professionSetFunc = () => {
+  const professionSet: Set<Number> = new Set();
+  const professions = store.tree!.querySelectorAll("player professions int");
+  professions.forEach((value) => {
+    professionSet.add(Number(value.textContent));
+  });
+  return professionSet;
+};
 const prof = (index: number) => {
   const resp = [];
+  const professionSet = professionSetFunc();
   for (let i = index * 6; i < index * 6 + 6; i++) {
     if (professionSet.has(i)) {
       resp.push(professionName[i]);
@@ -62,40 +67,45 @@ const skills = [
     title: "耕种",
     exp: experiencePoints[0],
     level: store.tree!.querySelector("player farmingLevel")!,
-    prof: prof(0),
   },
   {
     title: "钓鱼",
     exp: experiencePoints[1],
     level: store.tree!.querySelector("player fishingLevel")!,
-    prof: prof(1),
   },
   {
     title: "采集",
     exp: experiencePoints[2],
     level: store.tree!.querySelector("player foragingLevel")!,
-    prof: prof(2),
   },
   {
     title: "采矿",
     exp: experiencePoints[3],
     level: store.tree!.querySelector("player miningLevel")!,
-    prof: prof(3),
   },
   {
     title: "战斗",
     exp: experiencePoints[4],
     level: store.tree!.querySelector("player combatLevel")!,
-    prof: prof(4),
   },
   {
     title: "幸运",
     exp: experiencePoints[5],
     level: store.tree!.querySelector("player luckLevel")!,
-    prof: [],
   },
 ];
-console.log(skills);
+
+const clearProf = (index: number, level: number = 5) => {
+  const left = level === 5 ? index * 6 : index * 6 + 2;
+  for (let i = left; i < index * 6 + 6; i++) {
+    for (const item of store.tree!.querySelectorAll("player professions int")) {
+      if (item.textContent!.trim() === i.toString()) {
+        store.tree?.querySelector("player professions")?.removeChild(item);
+      }
+    }
+  }
+  contextStore.pageKey.skills++;
+};
 
 const skillsChangeShow = ref(false);
 const levelContextmenu = (index: number) => {
@@ -117,6 +127,9 @@ const levelContextmenu = (index: number) => {
             skills[index].level.textContent = value.value.toString();
             skills[index].exp.textContent = points[value.value].toString();
 
+            // 顺便把专精清空了
+            clearProf(index);
+
             contextStore.pageKey.skills++;
             skillsChangeShow.value = false;
           },
@@ -124,6 +137,70 @@ const levelContextmenu = (index: number) => {
       },
     },
   ];
+};
+
+const profContextmenu = (index: number, level: number) => {
+  if (level === 5) {
+    contextStore.options = [
+      {
+        title: professionName[index * 6],
+        onClick: () => {
+          clearProf(index);
+          store
+            .tree!.querySelector("player professions")!
+            .appendChild(createXmlElement(`<int>${index * 6}</int>`));
+          contextStore.pageKey.skills++;
+        },
+      },
+      {
+        title: professionName[index * 6 + 1],
+        onClick: () => {
+          clearProf(index);
+          store
+            .tree!.querySelector("player professions")!
+            .appendChild(createXmlElement(`<int>${index * 6 + 1}</int>`));
+          contextStore.pageKey.skills++;
+        },
+      },
+    ];
+  } else {
+    const level5 = professionName.indexOf(prof(index)[0]);
+    const target = index * 6 + (level5 - index * 6) * 2 + 2;
+    contextStore.options = [
+      {
+        title: professionName[target],
+        onClick: () => {
+          clearProf(index, 10);
+          store
+            .tree!.querySelector("player professions")!
+            .appendChild(createXmlElement(`<int>${target}</int>`));
+          contextStore.pageKey.skills++;
+        },
+      },
+      {
+        title: professionName[target + 1],
+        onClick: () => {
+          clearProf(index, 10);
+          store
+            .tree!.querySelector("player professions")!
+            .appendChild(createXmlElement(`<int>${target + 1}</int>`));
+          contextStore.pageKey.skills++;
+        },
+      },
+    ];
+  }
+};
+
+const profName = (index: number, level: number) => {
+  const professionSet = professionSetFunc();
+  const left = level === 5 ? index * 6 : index * 6 + 2;
+  const right = level === 5 ? index * 6 + 2 : index * 6 + 6;
+  for (let i = left; i < right; i++) {
+    if (professionSet.has(i)) {
+      return professionName[i];
+    }
+  }
+  return "待学习";
 };
 </script>
 
@@ -149,7 +226,22 @@ const levelContextmenu = (index: number) => {
             {{ item.level.textContent }}
           </td>
           <td>{{ item.exp.textContent }}</td>
-          <td v-for="n of item.prof">{{ n }}</td>
+          <td
+            v-if="Number(item.level.textContent) >= 5 && idx < 5"
+            @contextmenu="profContextmenu(idx, 5)"
+          >
+            {{ profName(idx, 5) }}
+          </td>
+          <td
+            v-if="
+              Number(item.level.textContent) >= 10 &&
+              idx < 5 &&
+              profName(idx, 5) !== '待学习'
+            "
+            @contextmenu="profContextmenu(idx, 10)"
+          >
+            {{ profName(idx, 10) }}
+          </td>
         </tr>
       </tbody>
     </table>
