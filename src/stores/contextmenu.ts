@@ -9,6 +9,7 @@ export const useContextMenuStore = defineStore("contextmenu", () => {
     objects: 0,
     money: 0,
     skills: 0,
+    friendship: 0,
   });
   return { options, pageKey };
 });

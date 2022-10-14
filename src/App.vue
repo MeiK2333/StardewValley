@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSavesStore } from "@/stores/saves";
 import ContextMenu from "./components/ContextMenu.vue";
+import { downloadXmlFile } from "./utils";
 
 const store = useSavesStore();
 //@ts-ignore
@@ -11,6 +12,12 @@ document.onselectstart = () => {
 };
 document.oncontextmenu = (event) => {
   event.preventDefault();
+};
+
+const downloadSaves = () => {
+  if (store.tree && store.name) {
+    downloadXmlFile(store.tree, store.name);
+  }
 };
 </script>
 
@@ -24,6 +31,14 @@ document.oncontextmenu = (event) => {
         <RouterLink :to="{ name: 'skills' }">
           <li class="menu-li sv-border sv-gradient">技能</li>
         </RouterLink>
+        <RouterLink :to="{ name: 'friendship' }">
+          <li class="menu-li sv-border sv-gradient">好感</li>
+        </RouterLink>
+        <a style="margin-left: auto">
+          <li class="menu-li sv-border sv-gradient" @click="downloadSaves">
+            下载存档
+          </li>
+        </a>
       </ul>
     </div>
     <RouterView />
@@ -37,10 +52,12 @@ document.oncontextmenu = (event) => {
   width: 860px;
   min-width: 860px;
   cursor: url("@/assets/cursor.png") 0 0, auto;
+  overflow: auto;
 }
 .menu {
   transform: translateY(-48px);
   position: absolute;
+  width: 860px;
 }
 .menu-ul {
   display: flex;
